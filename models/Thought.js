@@ -1,5 +1,5 @@
 const { Schema, model, Types } = require('mongoose');
-const dateFormat = require('../utils/dateFormat');
+const dateFormat = require('../utils/dateFormate');
 
 const ThoughtSchema = new Schema({
     thoughtText: {
@@ -17,7 +17,7 @@ const ThoughtSchema = new Schema({
         required:true,
         trim:true
     },
-    reactions:[ReactionSchema]
+    reactions:[]
     },
     {
         toJSON: {
