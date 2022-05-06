@@ -10,6 +10,12 @@ const userController = {
           })
           .select('-__v')
           .sort({ _id: -1 })
+          .populate({
+            path: 'friends',
+            select: '-__v'
+          })
+          .select('-__v')
+          .sort({ _id: -1 })
         .then(dbUserData => res.json(dbUserData))
         .catch(err => {
           console.log(err);
@@ -62,7 +68,34 @@ const userController = {
             res.json(dbUserData);
           })
           .catch(err => res.status(400).json(err));
-    }
+    },
+
+    // add a friend
+    addFriend({ params },res){
+        User.findOneAndUpdate(
+            {_id: params.id},
+            { $push: {friends: params.friendsId} },
+            {new: true}
+        )
+        .then((dbUserData) => res.json(dbUserData))
+        .catch((err) => res.status(400).json(err));
+    },
+
+    deleteFriend({ params }, res) {
+        User.findOneAndDelete(
+          { _id: params.id },
+          { $pull: { friends: params.friendsId } },
+          { new: true }
+        )
+          .then((dbUserData) => {
+            if (!dbUserData) {
+              res.status(404).json({ message: "no user found with this ID" });
+              return;
+            }
+            res.json(dbUserData);
+          })
+          .catch((err) => res.status(400).json(err));
+      },
 };
 
 module.exports = userController;
