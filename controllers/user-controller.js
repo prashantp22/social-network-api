@@ -46,10 +46,10 @@ const userController = {
             .catch(err => res.status(400).json(err));
     },
     // update userby id
-    updateUser({ param, body }, res) {
+    updateUser({ params, body }, res) {
         User.findOneAndUpdate({ _id: params.id }, body, { new: true })
             .then(dbUserData => {
-                if (!dbPizzaData) {
+                if (!dbUserData) {
                 res.status(404).json({ message: 'No user found with this id!' });
                 return;
                 }
@@ -82,20 +82,23 @@ const userController = {
     },
 
     deleteFriend({ params }, res) {
-        User.findOneAndDelete(
+        User.findOneAndUpdate(
           { _id: params.id },
           { $pull: { friends: params.friendsId } },
           { new: true }
         )
-          .then((dbUserData) => {
-            if (!dbUserData) {
-              res.status(404).json({ message: "no user found with this ID" });
-              return;
-            }
-            res.json(dbUserData);
-          })
-          .catch((err) => res.status(400).json(err));
-      },
+        .then(dbUserData => {
+          if (!dbUserData) {
+            res.status(404).json({ message: 'No user found with this id!' });
+            return;
+          }
+          res.json(dbUserData);
+        })
+        .catch((err) => {
+          console.log(err)
+          res.status(500).json(err)
+        });
+  }
 };
 
 module.exports = userController;
